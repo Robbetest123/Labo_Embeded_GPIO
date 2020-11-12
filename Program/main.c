@@ -36,9 +36,13 @@ int main(int args, char **argv)
 	int pin;
 	int oudestatus = 0;
 	int nieuwestatus = 0;
+	int oudestatusP19 = 0;
+	int nieuwestatusP19 = 0;
 	INP_GPIO(26);
+	INP_GPIO(19);
 	while(1)
 	{
+		// PIO 26 uitlezen + naar db sturen;
 		if(GPIO_READ(26))
 		{
 			nieuwestatus = 1;
@@ -50,7 +54,7 @@ int main(int args, char **argv)
 		if(oudestatus != nieuwestatus)
 		{
 			if(GPIO_READ(26)){
-			printf("de pin is hoog\n");
+			printf("de pin 26 is hoog\n");
 			pin = 26;
 			sprintf(operation,"INSERT INTO GPIO_Uitlezen VALUES(NULL,'%d','%d',NULL)",pin, nieuwestatus); // versturen naar db
 			if (mysql_query(conn,operation)) {
@@ -58,7 +62,7 @@ int main(int args, char **argv)
 			}
 			}
 			else{
-			printf("de pin is laag\n");
+			printf("de pin 26 is laag\n");
 			pin = 26;
 			sprintf(operation,"INSERT INTO GPIO_Uitlezen VALUES(NULL,'%d','%d',NULL)",pin, nieuwestatus); // versturen naar db
 			if (mysql_query(conn,operation)) {
@@ -67,6 +71,44 @@ int main(int args, char **argv)
 			}
 			oudestatus = nieuwestatus;
 		}
+
+
+
+
+
+		// PIO 19 uitlezen + naar db sturen;
+		if(GPIO_READ(19))
+		{
+			nieuwestatusP19 = 1;
+		}
+		else
+		{
+			nieuwestatusP19 = 0;
+		}
+		if(oudestatusP19 != nieuwestatusP19)
+		{
+			if(GPIO_READ(19)){
+			printf("de pin 19 is hoog\n");
+			pin = 19;
+			sprintf(operation,"INSERT INTO GPIO_Uitlezen VALUES(NULL,'%d','%d',NULL)",pin, nieuwestatus); // versturen naar db
+			if (mysql_query(conn,operation)) {
+			finish_with_error(conn);
+			}
+			}
+			else{
+			printf("de pin 19 is laag\n");
+			pin = 19;
+			sprintf(operation,"INSERT INTO GPIO_Uitlezen VALUES(NULL,'%d','%d',NULL)",pin, nieuwestatus); // versturen naar db
+			if (mysql_query(conn,operation)) {
+			finish_with_error(conn);
+			}
+			}
+			oudestatusP19 = nieuwestatusP19;
+		}
+
+
+
+		
 	}
 
 	return 0;	
